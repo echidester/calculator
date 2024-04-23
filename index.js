@@ -2,33 +2,81 @@
 let firstNum;
 let secondNum;
 let operator;
+let result;
 let displayValue = "";
+let tmpNumber = "";
 
 // Element Selectors
-const buttonsToDisplay = document.querySelectorAll(".number, .operator");
 const displayBox = document.querySelector("p");
+const numberBtns = document.querySelectorAll(".number");
+const operatorBtns = document.querySelectorAll(".operator");
 const equalButton = document.querySelector(".equal");
 const clearButton = document.querySelector(".clear");
 
 // Event Listeners
-buttonsToDisplay.forEach((button) =>
-  button.addEventListener("click", function (e) {
-    displayValue = displayValue + e.target.value;
-    displayBox.textContent = displayValue;
+numberBtns.forEach((numberBtn) =>
+  numberBtn.addEventListener("click", function (e) {
+    tmpNumber += e.target.value;
+    displayBox.textContent = tmpNumber;
+  })
+);
+
+operatorBtns.forEach((operatorBtn) =>
+  operatorBtn.addEventListener("click", function (e) {
+    if (tmpNumber !== "" && !firstNum) {
+      firstNum = parseInt(tmpNumber);
+      tmpNumber = "";
+      operator = e.target.value;
+      console.log(
+        `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
+      );
+    } else if (tmpNumber !== "" && firstNum) {
+      secondNum = parseInt(tmpNumber);
+      tmpNumber = "";
+      result = operate(firstNum, secondNum, operator);
+      firstNum = result;
+      secondNum = null;
+      displayBox.textContent = result;
+      operator = e.target.value;
+      console.log(
+        `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
+      );
+    } else if (tmpNumber === "" && firstNum) {
+      operator = e.target.value;
+    }
   })
 );
 
 equalButton.addEventListener("click", function (e) {
-  let index = displayValue.search(/-|\/|x|\+/);
-  firstNum = parseInt(displayValue.slice(0, index));
-  operator = displayValue.slice(index, index + 1);
-  secondNum = parseInt(displayValue.slice(index + 1));
-
-  displayBox.textContent = operate(firstNum, secondNum, operator);
+  if (firstNum && operator && tmpNumber) {
+    secondNum = parseInt(tmpNumber);
+    tmpNumber = "";
+    result = operate(firstNum, secondNum, operator);
+    displayBox.textContent = result;
+    firstNum = result;
+    secondNum = null;
+    operator = "";
+    console.log(
+      `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
+    );
+  } else if (firstNum && secondNum && operator) {
+    result = operate(firstNum, secondNum, operator);
+    displayBox.textContent = result;
+    firstNum = result;
+    secondNum = null;
+    operator = "";
+    console.log(
+      `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
+    );
+  }
 });
 
 clearButton.addEventListener("click", function () {
-  displayValue = "";
+  firstNum = null;
+  secondNum = null;
+  result = null;
+  operator = "";
+  tmpNumber = "";
   displayBox.textContent = "0";
 });
 
