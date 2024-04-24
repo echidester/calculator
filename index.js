@@ -1,13 +1,13 @@
 // Variables
 let firstNum;
 let secondNum;
+let tmpNumber = "";
 let operator;
 let result;
-let displayValue = "";
-let tmpNumber = "";
 
 // Element Selectors
 const displayBox = document.querySelector("p");
+
 const numberBtns = document.querySelectorAll(".number");
 const operatorBtns = document.querySelectorAll(".operator");
 const equalButton = document.querySelector(".equal");
@@ -27,20 +27,12 @@ operatorBtns.forEach((operatorBtn) =>
       firstNum = parseInt(tmpNumber);
       tmpNumber = "";
       operator = e.target.value;
-      console.log(
-        `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
-      );
     } else if (tmpNumber !== "" && firstNum) {
       secondNum = parseInt(tmpNumber);
       tmpNumber = "";
-      result = operate(firstNum, secondNum, operator);
-      firstNum = result;
-      secondNum = null;
-      displayBox.textContent = result;
+      operate(firstNum, secondNum, operator);
+
       operator = e.target.value;
-      console.log(
-        `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
-      );
     } else if (tmpNumber === "" && firstNum) {
       operator = e.target.value;
     }
@@ -51,32 +43,14 @@ equalButton.addEventListener("click", function (e) {
   if (firstNum && operator && tmpNumber) {
     secondNum = parseInt(tmpNumber);
     tmpNumber = "";
-    result = operate(firstNum, secondNum, operator);
-    displayBox.textContent = result;
-    firstNum = result;
-    secondNum = null;
-    operator = "";
-    console.log(
-      `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
-    );
+    operate(firstNum, secondNum, operator);
   } else if (firstNum && secondNum && operator) {
-    result = operate(firstNum, secondNum, operator);
-    displayBox.textContent = result;
-    firstNum = result;
-    secondNum = null;
-    operator = "";
-    console.log(
-      `fN: ${firstNum}, sN: ${secondNum}, o: ${operator}, r: ${result}, tN: ${tmpNumber}`
-    );
+    operate(firstNum, secondNum, operator);
   }
 });
 
 clearButton.addEventListener("click", function () {
-  firstNum = null;
-  secondNum = null;
-  result = null;
-  operator = "";
-  tmpNumber = "";
+  clear();
   displayBox.textContent = "0";
 });
 
@@ -98,21 +72,39 @@ const divide = function (a, b) {
   return a / b;
 };
 
-const operate = function (firstNum, secondNum, operator) {
-  switch (operator) {
-    case "+":
-      return add(firstNum, secondNum);
-      break;
-    case "-":
-      return subtract(firstNum, secondNum);
-      break;
-    case "x":
-      return multiply(firstNum, secondNum);
-      break;
-    case "/":
-      return divide(firstNum, secondNum);
-      break;
-    default:
-      console.log("Error");
+const operate = function (fNum, sNum, oper) {
+  if (sNum === 0 && oper === "/") {
+    clear();
+    displayBox.textContent = `You can't divide by zero!`;
+  } else {
+    switch (oper) {
+      case "+":
+        result = parseFloat(add(fNum, sNum).toFixed(10));
+        break;
+      case "-":
+        result = parseFloat(subtract(fNum, sNum).toFixed(10));
+        break;
+      case "x":
+        result = parseFloat(multiply(fNum, sNum).toFixed(10));
+        break;
+      case "/":
+        result = parseFloat(divide(fNum, sNum).toFixed(10));
+        break;
+      default:
+        console.log("Error");
+    }
+
+    firstNum = result;
+    secondNum = null;
+    displayBox.textContent = result;
+    operator = "";
   }
+};
+
+const clear = function () {
+  firstNum = null;
+  secondNum = null;
+  result = null;
+  operator = "";
+  tmpNumber = "";
 };
