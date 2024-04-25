@@ -21,6 +21,40 @@ numberBtns.forEach((numberBtn) =>
   })
 );
 
+document.querySelector("body").addEventListener("keydown", function (e) {
+  console.log(e.key);
+
+  if (/\d/.test(e.key)) {
+    tmpNumber += e.key;
+    displayBox.textContent = tmpNumber;
+  } else if (/[+*/-]/.test(e.key)) {
+    if (tmpNumber !== "" && !firstNum) {
+      firstNum = parseInt(tmpNumber);
+      tmpNumber = "";
+      operator = e.key;
+    } else if (tmpNumber !== "" && firstNum) {
+      secondNum = parseInt(tmpNumber);
+      tmpNumber = "";
+      operate(firstNum, secondNum, operator);
+
+      operator = e.key;
+    } else if (tmpNumber === "" && firstNum) {
+      operator = e.key;
+    }
+  } else if (/=/.test(e.key) || e.key === "Enter") {
+    if (firstNum && operator && tmpNumber) {
+      secondNum = parseInt(tmpNumber);
+      tmpNumber = "";
+      operate(firstNum, secondNum, operator);
+    } else if (firstNum && secondNum && operator) {
+      operate(firstNum, secondNum, operator);
+    }
+  } else if (e.key === "Backspace") {
+    clear();
+    displayBox.textContent = "0";
+  }
+});
+
 operatorBtns.forEach((operatorBtn) =>
   operatorBtn.addEventListener("click", function (e) {
     if (tmpNumber !== "" && !firstNum) {
@@ -85,6 +119,9 @@ const operate = function (fNum, sNum, oper) {
         result = parseFloat(subtract(fNum, sNum).toFixed(10));
         break;
       case "x":
+        result = parseFloat(multiply(fNum, sNum).toFixed(10));
+        break;
+      case "*":
         result = parseFloat(multiply(fNum, sNum).toFixed(10));
         break;
       case "/":
